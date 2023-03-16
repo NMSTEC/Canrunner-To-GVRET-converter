@@ -25,15 +25,20 @@ def convert_datalog(input_file, output_file):
 
             converted_line = convert_line(line.strip())
             outfile.write(f"{converted_line}\n")
-
+			
 def process_folder(input_folder, output_folder):
     os.makedirs(output_folder, exist_ok=True)
 
     for file in os.listdir(input_folder):
         input_file = os.path.join(input_folder, file)
         output_file = os.path.join(output_folder, f"{os.path.splitext(file)[0]}.csv")
-        if os.path.isfile(input_file):
+        if os.path.isfile(input_file) and is_valid_log_file(input_file, "ParserFlags\tCh\tCounter\tT/R\tTime\tFlags\tCAN ID\tLen\tData\tParser Name\tdefault"):
             convert_datalog(input_file, output_file)
+
+def is_valid_log_file(file_path, expected_header):
+    with open(file_path, "r") as file:
+        first_line = file.readline().strip()
+        return first_line == expected_header
 
 def main():
     parser = argparse.ArgumentParser(description="Convert datalog format")
